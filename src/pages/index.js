@@ -4,6 +4,18 @@ import PopupWithImage from "../components/PopupWithImage.js";
 import PopupWithForm from "../components/PopupWithForm.js";
 import { setOverlayAndEscClose } from "../components/utils.js";
 import UserInfo from "../components/UserInfo.js";
+import Api from "../components/Api.js";
+import PopupWithConfirmation from "../components/PopupWithConfirmation.js";
+
+// --- Instancia Api ---
+
+const api = new Api({
+  baseUrl: "https://around-api.es.tripleten-services.com/v1",
+  headers: {
+    authorization: "021e4328-0015-4879-bf18-295529cc966b",
+    "Content-Type": "application/json",
+  },
+});
 
 // --- Configuración de validación ---
 const validationConfig = {
@@ -29,7 +41,36 @@ const templateSelector = "#template-card";
 const userInfo = new UserInfo({
   nameSelector: ".profile__name",
   jobSelector: ".profile__role",
+  avatarSelector: ".profile__avatar",
 });
+
+api
+  .getAppInfo()
+  .then(([userData, cards]) => {
+    // --- Usuario ---
+    userInfo.setUserInfo({
+      name: userData.name,
+      job: userData.about,
+      avatar: userData.avatar,
+    });
+
+    // --- Tarjetas ---
+    cards.forEach((item) => {
+      const card = new Card(
+        item,
+        templateSelector,
+        handleImageClick,
+        userData._id,
+        (cardElement, cardId) => deleteCardPopup.open(cardElement, cardId)
+      );
+
+      const cardElement = card.generateCard();
+      sectionGallery.append(cardElement);
+    });
+  })
+  .catch((err) => {
+    console.log(err);
+  });
 
 // --- Popup editar perfil ---
 const editProfilePopup = new PopupWithForm("#popup-edit", (formData) => {
@@ -46,22 +87,51 @@ butEdit.addEventListener("click", () => {
   editProfilePopup.open();
 });
 
-// --- Popup Agregar Lugar ---
-const addPlacePopup = new PopupWithForm("#popup-place", (formData) => {
-  const card = new Card(
-    {
-      name: formData.title,
-      link: formData.link,
-    },
-    templateSelector,
-    handleImageClick
-  );
+// --- Popup Editar Avatar ---
 
-  const cardElement = card.generateCard();
-  sectionGallery.prepend(cardElement);
+const avatarPopup = new PopupWithForm("#popup-avatar", (formData) => {
+  api
+    .updateAvatar({ avatar: formData.avatar })
+    .then((userData) => {
+      userInfo.setUserInfo({
+        avatar: userData.avatar,
+      });
+      avatarPopup.close();
+    })
+    .catch((err) => {
+      console.log(err);
+    });
 });
 
+avatarPopup.setEventListeners();
+
+// --- Popup Agregar Lugar ---
+
+const addPlacePopup = new PopupWithForm("#popup-place", (formData) => {
+  console.log(formData);
+  api
+    .addCard({
+      name: formData.name,
+      link: formData.link,
+    })
+    .then((cardData) => {
+      const card = new Card(cardData, templateSelector, handleImageClick);
+
+      const cardElement = card.generateCard();
+      sectionGallery.prepend(cardElement);
+      addPlacePopup.close();
+    })
+    .catch((err) => {
+      console.log(err);
+    });
+});
 addPlacePopup.setEventListeners();
+
+const avatarEditButton = document.querySelector(".profile__avatar-edit");
+
+avatarEditButton.addEventListener("click", () => {
+  avatarPopup.open();
+});
 
 // --- Botones que abren popups ---
 const butAdd = document.querySelector(".profile__add-btn");
@@ -74,25 +144,25 @@ butAdd.addEventListener("click", () => {
 const imagePopup = new PopupWithImage(".popup_type_image");
 imagePopup.setEventListeners();
 
+// --- Popup Confirmación Eliminar Tarjeta ---
+const deleteCardPopup = new PopupWithConfirmation(
+  "#popup-delete",
+  (cardElement, cardId) => {
+    api
+      .deleteCard(cardId)
+      .then(() => {
+        cardElement.remove();
+        deleteCardPopup.close();
+      })
+      .catch((err) => console.log(err));
+  }
+);
+
+deleteCardPopup.setEventListeners();
+
 function handleImageClick(name, link) {
   imagePopup.open({ name, link });
 }
-
-const initialCards = [
-  { name: "Isla de Galápagos", link: "./images/islagalapagos.jpg" },
-  { name: "Amazonas", link: "./images/Amazonia.jpg" },
-  { name: "Isla Clipperton", link: "./images/isla_clipperton.jpg" },
-  { name: "Golfo de California", link: "./images/golfo de california.jpg" },
-  { name: "Antártida", link: "./images/antartida.jpg" },
-  { name: "Arrecifes de coral", link: "./images/arrecifes de coral.jpg" },
-];
-
-// Agregar tarjetas iniciales
-initialCards.forEach((item) => {
-  const card = new Card(item, templateSelector, handleImageClick);
-  const cardElement = card.generateCard();
-  sectionGallery.append(cardElement);
-});
 
 // --- Activar cierre con overlay y tecla ESC ---
 setOverlayAndEscClose();

@@ -23,16 +23,24 @@
       <main class="profile">
         <section class="profile__user">
           <div class="profile__info">
-            <img
-              src="./images/Avatar.png"
-              alt="Jacques Cousteau"
-              class="profile__avatar"
-            />
+            <div class="profile__avatar-container">
+              <img
+                src="./images/Avatar.png"
+                alt="Avatar"
+                class="profile__avatar"
+              />
+              <button
+                type="button"
+                class="profile__avatar-edit"
+                aria-label="Editar avatar"
+              ></button>
+            </div>
+
             <div class="profile__details">
               <div class="profile__title">
                 <h2 class="profile__name">Jacques Cousteau</h2>
                 <button
-                  class="profile__edit profile__edit-btn"
+                  class="profile__edit-btn"
                   aria-label="Editar perfil"
                 ></button>
               </div>
@@ -40,15 +48,30 @@
             </div>
           </div>
 
-          <button
-            class="profile__add profile__add-btn"
-            aria-label="Agregar lugar"
-          ></button>
+          <button class="profile__add-btn" aria-label="Agregar lugar"></button>
         </section>
 
         <section class="gallery">
           <ul class="gallery__list"></ul>
         </section>
+
+        <div class="popup" id="popup-confirm">
+          <form class="popup__form">
+            <button
+              type="button"
+              class="popup__button popup__button-close"
+              aria-label="Cerrar popup"
+            >
+              X
+            </button>
+            <h2 class="popup__subtitle">¿Estás seguro?</h2>
+            <fieldset class="popup__content">
+              <button type="submit" class="popup__button popup__button-save">
+                Sí
+              </button>
+            </fieldset>
+          </form>
+        </div>
       </main>
       <footer class="footer">
         <p class="footer__text">© 2025 Around The U.S.-Christiam Ruiz</p>
@@ -94,6 +117,32 @@
           </fieldset>
         </form>
       </div>
+      <div class="popup" id="popup-avatar">
+        <form class="popup__form">
+          <button type="button" class="popup__button popup__button-close">
+            X
+          </button>
+          <h2 class="popup__subtitle">Cambiar avatar</h2>
+          <fieldset class="popup__content">
+            <input
+              type="url"
+              id="avatar"
+              name="avatar"
+              required
+              class="popup__input popup__input-avatar"
+              placeholder="URL del avatar"
+            />
+            <div class="validation-avatar">
+              <p class="text-error" id="avatar-validation"></p>
+            </div>
+          </fieldset>
+          <fieldset class="popup__content">
+            <button type="submit" class="popup__button popup__button-save">
+              Guardar
+            </button>
+          </fieldset>
+        </form>
+      </div>
       <div class="popup" id="popup-place">
         <form class="popup__form" id="form-place">
           <button type="button" class="popup__button popup__button-close">
@@ -105,7 +154,7 @@
               type="text"
               id="title"
               required
-              name="title"
+              name="name"
               minlength="2"
               maxlength="30"
               class="popup__input popup__input-title"
@@ -143,6 +192,19 @@
           <img class="popup__image" src="#" alt="Imagen ampliada" />
           <p class="popup__caption"></p>
         </div>
+      </div>
+      <div class="popup" id="popup-delete">
+        <form class="popup__form">
+          <button type="button" class="popup__button popup__button-close">
+            X
+          </button>
+          <h2 class="popup__subtitle">¿Eliminar tarjeta?</h2>
+          <fieldset class="popup__content">
+            <button type="submit" class="popup__button popup__button-save">
+              Sí
+            </button>
+          </fieldset>
+        </form>
       </div>
     </div>
     <template id="template-card">
