@@ -34,7 +34,23 @@ export default class Card {
 
   // Maneja el evento de like
   _handleLike() {
-    this._likeButton.classList.toggle("gallery__like-btn_active");
+    if (!this._isLiked) {
+      api
+        .likeCard(this._id)
+        .then((res) => {
+          this._isLiked = true;
+          this._likeButton.classList.add("gallery__like-btn_active");
+        })
+        .catch((err) => console.log(err));
+    } else {
+      api
+        .unlikeCard(this._id)
+        .then((res) => {
+          this._isLiked = false;
+          this._likeButton.classList.remove("gallery__like-btn_active");
+        })
+        .catch((err) => console.log(err));
+    }
   }
 
   // Asigna los event listeners

@@ -74,7 +74,17 @@ api
 
 // --- Popup editar perfil ---
 const editProfilePopup = new PopupWithForm("#popup-edit", (formData) => {
-  userInfo.setUserInfo(formData);
+  return api
+    .updateUserInfo({ name: formData.name, about: formData.job })
+    .then((userData) => {
+      userInfo.setUserInfo({
+        name: userData.name,
+        job: userData.about,
+        avatar: userData.avatar,
+      });
+      editProfilePopup.close();
+    })
+    .catch((err) => console.log(err));
 });
 
 editProfilePopup.setEventListeners();
@@ -90,7 +100,7 @@ butEdit.addEventListener("click", () => {
 // --- Popup Editar Avatar ---
 
 const avatarPopup = new PopupWithForm("#popup-avatar", (formData) => {
-  api
+  return api
     .updateAvatar({ avatar: formData.avatar })
     .then((userData) => {
       userInfo.setUserInfo({
@@ -108,14 +118,19 @@ avatarPopup.setEventListeners();
 // --- Popup Agregar Lugar ---
 
 const addPlacePopup = new PopupWithForm("#popup-place", (formData) => {
-  console.log(formData);
-  api
+  return api
     .addCard({
       name: formData.name,
       link: formData.link,
     })
     .then((cardData) => {
-      const card = new Card(cardData, templateSelector, handleImageClick);
+      const card = new Card(
+        cardData,
+        templateSelector,
+        handleImageClick,
+        userInfo.getUserInfo()._id,
+        handleDeleteConfirm
+      );
 
       const cardElement = card.generateCard();
       sectionGallery.prepend(cardElement);

@@ -7,6 +7,8 @@ export default class PopupWithForm extends Popup {
     this._handleFormSubmit = handleFormSubmit;
     this._form = this._popup.querySelector(".popup__form");
     this._inputList = Array.from(this._form.querySelectorAll(".popup__input"));
+    this._submitButton = this._form.querySelector(".popup__button-save");
+    this._submitButtonText = this._submitButton.textContent;
   }
 
   _getInputValues() {
@@ -30,8 +32,18 @@ export default class PopupWithForm extends Popup {
 
     this._form.addEventListener("submit", (evt) => {
       evt.preventDefault();
-      this._handleFormSubmit(this._getInputValues());
+      this.renderLoading(true);
+      this._handleFormSubmit(this._getInputValues()).finally(() => {
+        this.renderLoading(false);
+      });
     });
+  }
+  renderLoading(isLoading, loadingText = "Guardando...") {
+    if (isLoading) {
+      this._submitButton.textContent = loadingText;
+    } else {
+      this._submitButton.textContent = this._submitButtonText;
+    }
   }
 
   close() {
