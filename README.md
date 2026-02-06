@@ -1,5 +1,27 @@
-# Tripleten web_project_around
+Around The U.S. – Proyecto Frontend
 
-Descripcion del proyecto: Página interactiva logrando editar nombre y descripcion del usuario con un popup; usando estructura HTML, CSS y JS. Usando metodologia BEM.
+Aplicación web interactiva desarrollada con HTML, CSS y JavaScript puro, enfocada en la manipulación del DOM, estructura modular y buenas prácticas de desarrollo frontend.
 
-enlace GitHub Pages: https://github.com/Christiam9/web_project_around
+Características principales
+
+Edición dinámica de perfil (nombre y descripción).
+
+Renderizado de tarjetas desde datos iniciales.
+
+Sistema de “like” en imágenes.
+
+Apertura de imágenes en vista ampliada (popup).
+
+Formularios con validación.
+
+Diseño responsive basado en metodología BEM.
+
+Organización del código en módulos JavaScript.
+
+Tecnologías
+HTML5 · CSS3 · JavaScript (ES6) · BEM · Responsive Design · Git · GitHub Pages
+
+Objetivo
+Fortalecer habilidades en manipulación del DOM, eventos, modularización y lógica de interfaz, simulando el comportamiento de una aplicación real.
+
+🔗 Demo en vivo: https://christiam9.github.io/web_project_around/
